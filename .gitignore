@@ -1,0 +1,6 @@
+node_modules/
+dist/
+*.log
+# local runtime data, if ever placed in-repo
+/data/
+.echomind/

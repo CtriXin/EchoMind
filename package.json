@@ -1,0 +1,34 @@
+{
+  "name": "@ctrixin/echomind",
+  "version": "0.0.1",
+  "description": "EchoMind v0 — decision ledger + pattern distiller (Learning Layer substrate). Thin recorder: no auto-routing, no workflow mutation, no MMS writes.",
+  "type": "module",
+  "bin": {
+    "echomind": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "docs",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "node --experimental-strip-types src/cli.ts",
+    "smoke": "node --experimental-strip-types src/cli.ts help",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "echomind",
+    "decision-record",
+    "preference",
+    "learning-layer"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.0"
+  }
+}
