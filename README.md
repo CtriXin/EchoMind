@@ -64,6 +64,10 @@ echomind context --repo multi-model-switch --issue 48
 
 # human-readable ledger
 echomind ledger
+
+# distilled preferences -> xmem cards (dry-run lists candidates; --write emits jsonl)
+echomind promote
+echomind promote --write
 ```
 
 ## Data home
@@ -78,3 +82,11 @@ See [docs/SCHEMA.md](docs/SCHEMA.md) for layout and
 (Looper × MMS trial) emits one Decision Record per human-merge decision. That is
 EchoMind's primary input — running the two together is what makes the ledger
 worth distilling.
+
+## Seam with xmem (recall)
+
+EchoMind does not build its own session injection. It acts as an **xmem adapter**:
+`echomind promote` turns distilled preferences into `xmem-export.cards.jsonl`,
+which xmem ingests and recalls into every session via its gateway hook. EchoMind
+only produces the export file; ingestion (`xmem import` / `xmem sync`) is an
+explicit, human-audited step. See [docs/XMEM_ADAPTER.md](docs/XMEM_ADAPTER.md).

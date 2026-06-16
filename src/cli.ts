@@ -4,6 +4,7 @@ import { addDecision, loadDecisions } from "./decision.js";
 import { upsertIssue } from "./issuelog.js";
 import { distill } from "./distill.js";
 import { buildContext } from "./readcontract.js";
+import { promote } from "./promote.js";
 import { echomindHome } from "./paths.js";
 import type { DecisionType, Outcome, Priority } from "./types.js";
 
@@ -29,6 +30,8 @@ Usage:
   echomind distill [--threshold <n>] [--force]
   echomind context --repo <r> [--issue <id>] [--limit <n>]   # agent read contract
   echomind ledger [--limit <n>]                              # human markdown view
+  echomind promote [--min-confidence <n>] [--min-count <n>] [--write] [--out <p>]
+                                                             # distilled prefs -> xmem cards (dry-run default)
   echomind help
 
 preference_signal convention (drives distill bucketing):
@@ -146,6 +149,24 @@ function cmdLedger(args: string[]): void {
   process.stdout.write(lines.join("\n") + "\n");
 }
 
+function cmdPromote(args: string[]): void {
+  const { values } = parseArgs({
+    args,
+    options: {
+      "min-confidence": { type: "string" },
+      "min-count": { type: "string" },
+      write: { type: "boolean" },
+      out: { type: "string" },
+    },
+  });
+  out(promote({
+    minConfidence: values["min-confidence"] ? Number(values["min-confidence"]) : undefined,
+    minCount: values["min-count"] ? Number(values["min-count"]) : undefined,
+    write: values.write,
+    out: values.out,
+  }));
+}
+
 function main(): void {
   const [cmd, ...rest] = process.argv.slice(2);
   switch (cmd) {
@@ -154,6 +175,7 @@ function main(): void {
     case "distill": return cmdDistill(rest);
     case "context": return cmdContext(rest);
     case "ledger": return cmdLedger(rest);
+    case "promote": return cmdPromote(rest);
     case "help":
     case "--help":
     case "-h":

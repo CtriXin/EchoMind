@@ -15,6 +15,11 @@ export function writeJson(file: string, value: unknown): void {
   fs.writeFileSync(file, JSON.stringify(value, null, 2) + "\n", "utf8");
 }
 
+export function writeText(file: string, text: string): void {
+  ensureDir(path.dirname(file));
+  fs.writeFileSync(file, text, "utf8");
+}
+
 export function listJson<T>(dir: string): T[] {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir)
