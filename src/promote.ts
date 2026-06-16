@@ -87,6 +87,6 @@ export function promote(opts: PromoteOpts = {}): PromoteResult {
     cards,
     written: true,
     out,
-    note: `wrote ${cards.length} card(s) to ${out}; ingest explicitly via xmem (e.g. \`xmem import ${out}\` then \`xmem sync\`) — EchoMind does not run xmem itself`,
+    note: `wrote ${cards.length} card(s) to ${out}; ingest explicitly via xmem (e.g. \`xmem import export ${out}\`) — EchoMind does not run xmem itself`,
   };
 }

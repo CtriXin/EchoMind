@@ -22,7 +22,7 @@ an **xmem adapter**: it emits cards xmem already knows how to ingest and recall.
 echomind distill  →  Pattern Memory  →  echomind promote  →  xmem-export.cards.jsonl
                                                                      │
                                                   (human, explicit)  ▼
-                                                xmem import / xmem sync  →  gateway recall
+                                                xmem import export <path>  →  gateway recall
 ```
 
 EchoMind only **produces** the export file. It never runs xmem, never touches
@@ -67,16 +67,114 @@ echomind distill --force
 echomind promote                 # dry-run: list candidate cards
 echomind promote --write         # emit $ECHOMIND_HOME/xmem-export.cards.jsonl
 # then, explicitly (human-audited):
-xmem import ~/.echomind/xmem-export.cards.jsonl   # verify exact ingest flag
-xmem sync
+xmem import export ~/.echomind/xmem-export.cards.jsonl
+xmem context "EchoMind xmem adapter JSONL import export preference"
 ```
 
-## Open items (verify before relying on auto-recall)
+Optional repo helper:
 
-1. Exact xmem ingest command for an export jsonl (`xmem import <file>` vs
-   registering the path as a source consumed by `xmem sync`) — confirm against
-   `xmem --help` / `xmem doctor`.
-2. Optionally register EchoMind's export path as a standing xmem source so
-   `xmem sync` picks it up without a manual import.
-3. End-to-end check: after ingest, a fresh session's xmem recall surfaces the
-   promoted preference.
+```bash
+scripts/promote-and-sync.sh       # audit-only: prints commands, runs promote dry-run
+scripts/promote-and-sync.sh --yes # writes export, then runs xmem import export <path>
+```
+
+The helper intentionally stays outside TypeScript: EchoMind remains a producer,
+and xmem ingestion remains an explicit CLI step.
+
+## Verified ingest contract (2026-06-16)
+
+Executed on this machine with `/Users/xin/.local/bin/xmem`.
+
+`xmem --help` lists `import` and `sync`, and `xmem doctor` confirms the global
+registry at `~/.xmem/registry.sqlite`:
+
+```text
+xmem_doctor: warn
+components:
+- registry: ok ok (cards=2902 projects=1469)
+- current_repo: warn unregistered (/Users/xin/auto-skills/CtriXin-repo/EchoMind)
+```
+
+The export JSONL is not ingested with `xmem import <file>`:
+
+```text
+$ xmem import /Users/xin/.echomind/xmem-export.cards.jsonl
+xmem import: error: argument <source>: invalid choice: '/Users/xin/.echomind/xmem-export.cards.jsonl'
+```
+
+`xmem sync` also does not accept a file path:
+
+```text
+$ xmem sync /Users/xin/.echomind/xmem-export.cards.jsonl
+xmem: error: unrecognized arguments: /Users/xin/.echomind/xmem-export.cards.jsonl
+```
+
+The exact adapter command is:
+
+```text
+$ xmem import export --help
+用法: 用法: xmem import export [-h] [path]
+
+参数:
+  path
+```
+
+End-to-end run:
+
+```text
+$ node dist/cli.js distill --force
+"skipped": false
+"signal": "EchoMind xmem adapter JSONL is ingested with xmem import export after audit"
+
+$ node dist/cli.js promote
+"written": false
+"note": "dry-run: 1 candidate card(s) (min-confidence=0.2, min-count=2); pass --write to emit jsonl"
+
+$ scripts/promote-and-sync.sh
+Audit plan:
+- EchoMind export: /Users/xin/.echomind/xmem-export.cards.jsonl
+- xmem ingest uses the existing export adapter; no xmem engine files are modified.
+- Commands:
+  node dist/cli.js promote --out /Users/xin/.echomind/xmem-export.cards.jsonl
+  node dist/cli.js promote --write --out /Users/xin/.echomind/xmem-export.cards.jsonl
+  /Users/xin/.local/bin/xmem import export /Users/xin/.echomind/xmem-export.cards.jsonl
+Dry-run only. Re-run with --yes to write and ingest.
+
+$ scripts/promote-and-sync.sh --yes
+Writing export:
+"written": true
+"out": "/Users/xin/.echomind/xmem-export.cards.jsonl"
+Ingesting into xmem:
+{
+  "cards": 1,
+  "evidence": 2,
+  "skipped_bug_patterns": 0
+}
+```
+
+Recall verification:
+
+```text
+$ xmem context "EchoMind xmem adapter JSONL import export preference"
+rules[5]:
+  - id: preference.echomind-xmem-adapter-jsonl-is-ingested-with-xmem-import-exp
+    rank: 1
+    type: rule
+    truth: verified
+    confidence: 1.0
+    source: xmem-export
+    title: EchoMind xmem adapter JSONL is ingested with xmem import export after audit
+    source_path: /Users/xin/.echomind/xmem-export.cards.jsonl
+
+$ xmem recall "EchoMind xmem adapter JSONL import export preference"
+memories:
+- id: preference.echomind-xmem-adapter-jsonl-is-ingested-with-xmem-import-exp score=26.5 truth=verified confidence=1.0 title=EchoMind xmem adapter JSONL is ingested with xmem import export after audit
+  path: /Users/xin/.echomind/xmem-export.cards.jsonl
+```
+
+## Closed items
+
+1. Exact command verified: `xmem import export <path>`.
+2. No source-registration path was exposed by `xmem --help`, `xmem sync --help`,
+   or `xmem doctor`; use the existing `import export` adapter instead.
+3. End-to-end recall verified through `xmem context` and `xmem recall`.

@@ -88,5 +88,5 @@ worth distilling.
 EchoMind does not build its own session injection. It acts as an **xmem adapter**:
 `echomind promote` turns distilled preferences into `xmem-export.cards.jsonl`,
 which xmem ingests and recalls into every session via its gateway hook. EchoMind
-only produces the export file; ingestion (`xmem import` / `xmem sync`) is an
+only produces the export file; ingestion (`xmem import export <path>`) is an
 explicit, human-audited step. See [docs/XMEM_ADAPTER.md](docs/XMEM_ADAPTER.md).

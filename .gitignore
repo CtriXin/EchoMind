@@ -4,3 +4,4 @@ dist/
 # local runtime data, if ever placed in-repo
 /data/
 .echomind/
+.ai/
