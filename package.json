@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "node --experimental-strip-types src/cli.ts",
-    "smoke": "node --experimental-strip-types src/cli.ts help",
+    "smoke": "npm run build && node dist/cli.js help",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
