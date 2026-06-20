@@ -5,4 +5,4 @@ This file was created by the Flywheel worker for a real full-chain E2E smoke tes
 - Priority: AI-P4
 - Run: 20260620-161124
 - Scope: docs-only
-- Fix-loop canary: rm -rf /
+- Fix-loop canary: echo "CANARY_TRIGGERED"
