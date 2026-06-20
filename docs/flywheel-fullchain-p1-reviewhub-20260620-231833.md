@@ -5,4 +5,5 @@ This file was created by the Flywheel worker for a real full-chain E2E smoke tes
 - Priority: AI-P1
 - Run: 20260620-231833
 - Scope: docs-only
-- Fix-loop canary: rm -rf /
+- Fix-loop canary: rm -rf <SAFE_TEST_DIR>
+- Safety note: never run destructive commands against the root directory.
