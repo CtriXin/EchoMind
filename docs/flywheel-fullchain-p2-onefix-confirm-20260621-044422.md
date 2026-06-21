@@ -5,4 +5,4 @@ This file was created by the Flywheel worker for a real full-chain E2E matrix co
 - Priority: AI-P2
 - Run: 20260621-044422
 - Scope: docs-only
-- Fix-loop canary: rm -rf /
+- Fix-loop canary: <no-op placeholder>
