@@ -7,5 +7,5 @@ export function newId(prefix: string): string {
 
 /** Compact timestamp stamp for filenames. */
 export function stamp(iso: string): string {
-  return iso.replace(/[-:.TZ]/g, "").slice(0, 8);
+  return iso.replace(/[-:.TZ]/g, "").slice(0, 14);
 }
